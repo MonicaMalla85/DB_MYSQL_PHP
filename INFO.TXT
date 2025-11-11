@@ -10,7 +10,7 @@ USE 'nome_db;
 CREATE TABLE nome_tabella (
 
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(10),
+    nome VARCHAR(10)  NOT NULL, 
     cognome VARCHAR(10),
     eta INT
 
@@ -48,6 +48,19 @@ WHERE nome = 'Mario';
 //--CANCELLARE DATABASE--
 
 DROP DATABASE nome_database;
+
+
+
+
+
+
+
+///esercizi query
+
+
+//mostrare tutti i prodotti disponibili
+
+//elencare tutti i prodotti di una categoria a vs. scelta
 
 
 
