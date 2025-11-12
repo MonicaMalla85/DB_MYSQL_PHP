@@ -22,7 +22,6 @@
         <h1>Rubrica contatti</h1>
         <a href="aggiungi_contatto.php" class="button">Aggiungi contatto</a>
 
-
         <table>
 
             <thead>
@@ -43,12 +42,9 @@
                 </tr>
             </thead>
 
-
-
-
             <tbody>
                 <!--Ciclo WHILE FINTANTO CHE HO RESULT, MOSTRAMELI IN ROW DEDICATE--->
-                <?php  while($row = mysqli_fetch_assoc($result)) :     ?>
+                <?php  while($row = mysqli_fetch_assoc($result)) : ?>
                     <tr>
                         <td>
                         <!--HTMLSPECIALCHARS aggiunge alla pagina html parti di codice-->
@@ -63,12 +59,16 @@
 
                         <td class="actions">
 
-                            <a href="modifica_contatto.php">🖊️</a>
-                            <a href="elimina_contatto.php">🗑️</a>
-                            <a href="ordini.php">📦</a>
+                            <!-- Modifica: aggiunto passaggio dell'id del contatto tramite GET -->
+                            <a href="modifica_contatto.php?id=<?= $row['id'] ?>">🖊️</a>
+
+                            <!-- Elimina: aggiunto passaggio dell'id del contatto tramite GET -->
+                            <a href="elimina_contatto.php?id=<?= $row['id'] ?>">🗑️</a>
+
+                            <!-- Ordini: aggiunto passaggio dell'id del contatto tramite GET -->
+                            <a href="ordini.php?id=<?= $row['id'] ?>">📦</a>
 
                         </td>                          
-                            
                     </tr>
 
                 <?php endwhile; ?>    
