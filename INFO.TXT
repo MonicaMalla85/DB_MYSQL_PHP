@@ -101,5 +101,62 @@ DROP DATABASE nome_database;
     DELETE FROM prodotti WHERE id = 6;
 
 
-    
+//aggiungere colonna a TABELLA
 
+    ALTER TABLE nome_tabella
+    ADD COLUMN nome_colonna tipo_di_dato;
+
+        es. ALTER TABLE appartamenti
+        ADD COLUMN giardino BOOLEAN;
+
+
+
+//eliminare colonna da TABELLA
+
+    ALTER TABLE nome_tabella
+    DROP COLUMN nome_colonna;
+
+        es. ALTER TABLE appartamenti
+        DROP COLUMN giardino;
+
+
+
+
+
+
+//ESERCIZIO APPARTAMENTI
+
+CREARE DB APPARTAMENTI, 
+CREARE TABELLA, 
+E INSERIRE : ID, INTERNO, PIANO, METRI_QUADRI, PROPRIETARIO
+
+    //MOSTRARE TUTTI GLI APPARTAMENTI
+
+    //MOSTRARE GLI APPARTAMENTI AL 2° PIANO
+
+    //MOSTRARE APPARTAMENTI CON PIU DI 80MQ2
+
+    //MOSTRARE SOLO INTERNO E PROPRIETARIO
+
+    //ORDINARE GLI APPARTAMENTI PER METRI_QUADRI DAL PIU GRANDE AL PIU PICCOLO
+
+    //CALCOLA LA MEDIA DEI METRI_QUADRI
+    SELECT AVG(metri_quadri) AS media_metri
+    FROM condominio;
+
+    //INSERIMENTO DI DATI, POPOLARLO
+
+    //AGGIORNAMENTO DI UN DATO (METRI_QUADRI)
+
+    //CANCELLARE UN DATO ( UN INTERNO )
+
+    //CANCELLARE APPARTAMENTI SOTTO GLI 80MQ2
+
+
+//////////////////FOREIGN KEY///////////
+
+table appartamenti                          table inquilini    CREO UNA "FOREIGN KEY" CHE COLLEGA LE DUE TABELLE
+
+ID INT AUTO_INCREMENT PRIMARY KEY           ID INT AUTO_INCREMENT PRIMARY KEY
+                                            id_appartamento INT
+                                            FOREIGN KEY (id_appartamento) REFERENCES appartamenti (id);
