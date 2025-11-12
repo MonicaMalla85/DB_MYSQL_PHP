@@ -1,0 +1,26 @@
+/* Manteniamo eventuali personalizzazioni minime */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Pulsanti personalizzati possono rimanere se vuoi override */
+a.button {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 10px 0;
+    background: #007bff;
+    border-radius: 4px;
+    text-decoration: none;
+    color: whitesmoke;
+}
+
+a.button:hover {
+    background: #19406a;
+}
+
+/* Azioni nelle tabelle */
+.actions a {
+    margin-right: 10px;
+    text-decoration: none;
+}
