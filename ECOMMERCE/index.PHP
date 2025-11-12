@@ -3,11 +3,8 @@
     require 'db.php';
 
     //salvo in una variabile $result, i risultati della query
-    $result = mysqli_query($conn, "SELECT * FROM contatti"); //query per prendermi tutta la tabella "contatti"
+    $result = mysqli_query($conn, "SELECT * FROM contatti"); // query per prendermi tutta la tabella contatti
 ?>
-
-
-
 
 
 <!DOCTYPE html>
@@ -16,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecommerce</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v<?= time() ?>">
 </head>
 <body>
 
@@ -31,14 +28,18 @@
             <thead>
                 <tr>
                     <th>
-                        Nome:
+                        Nome : 
+                    </th>
+                     <th>
+                        Telefono : 
                     </th>
                     <th>
-                        Telefono:
+                        Email : 
                     </th>
                     <th>
-                        Email:
+                        Actions : 
                     </th>
+                    
                 </tr>
             </thead>
 
@@ -46,28 +47,31 @@
 
 
             <tbody>
-                <!---Ciclo WHILE FINTANTO CHE HO RESULT, MOSTRAMELI IN ROW DEDICATE--->
-                    <?php  while($row = mysqli_fetch_assoc($result)) :   ?>
-                        <tr>
-                            <td>
-                                <?= htmlspecialchars($row['nome']) ?>
-                            </td>
-                            <td> 
-                                <?= htmlspecialchars($row['telefono']) ?>
-                            </td>   
-                            <td>   
-                                <?= htmlspecialchars($row['email']) ?>
-                            </td> 
-                            <td class="action">
+                <!--Ciclo WHILE FINTANTO CHE HO RESULT, MOSTRAMELI IN ROW DEDICATE--->
+                <?php  while($row = mysqli_fetch_assoc($result)) :     ?>
+                    <tr>
+                        <td>
+                        <!--HTMLSPECIALCHARS aggiunge alla pagina html parti di codice-->
+                            <?= htmlspecialchars($row['nome']) ?> <!--mostra nome-->
+                        </td>
+                        <td>
+                            <?= htmlspecialchars($row['telefono']) ?> <!--mostra telefono-->
+                        </td>
+                        <td>
+                            <?= htmlspecialchars($row['email']) ?> <!--mostra email-->
+                        </td>
 
-                                <a href="modifica_contatto.php">Edit</a>
-                                <a href="elimina_contatto.php">Delete</a>
-                                <a href="ordini.php">Ordini</a>
+                        <td class="actions">
 
-                            </td>
-                        </tr>
-                    
-                    <?php endwhile; ?>
+                            <a href="modifica_contatto.php">🖊️</a>
+                            <a href="elimina_contatto.php">🗑️</a>
+                            <a href="ordini.php">📦</a>
+
+                        </td>                          
+                            
+                    </tr>
+
+                <?php endwhile; ?>    
             </tbody>
         </table>
     </div>
