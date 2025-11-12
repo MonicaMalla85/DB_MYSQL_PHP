@@ -10,7 +10,7 @@ USE 'nome_db;
 CREATE TABLE nome_tabella (
 
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(10)  NOT NULL, 
+    nome VARCHAR(10)  NOT NULL,    -> NOT NULL vuol dire obbligatorio
     cognome VARCHAR(10),
     eta INT
 
@@ -55,12 +55,51 @@ DROP DATABASE nome_database;
 
 
 
-///esercizi query
+//----------------ESERCIZI QUERY---------------------
 
 
 //mostrare tutti i prodotti disponibili
 
+    SELECT * FROM `prodotti` WHERE disponibili = TRUE
+
 //elencare tutti i prodotti di una categoria a vs. scelta
 
+    SELECT * FROM `prodotti` WHERE categoria = 'INFORMATICA'
 
+
+// mostrare il nome e il prezzo e la quatità dei prodotti con quantità minore di 5 
+
+    SELECT nome, prezzo, quantita FROM prodotti WHERE quantita < 5;
+
+
+//ordino tutti i prodotti per prezzo decrescente
+
+    SELECT * FROM prodotti ORDER BY prezzo DESC;  ASC (crescente)
+
+
+//trovare i prodotti con prezzo compreso tra un range di prezzi
+
+    SELECT * FROM prodotti WHERE prezzo BETWEEN 100 AND 900;
+
+
+//calcolare il prezzo medio per categoria
+
+    SELECT categoria, AVG(prezzo) AS prezzo_medio      AVG-> average (media)
+    FROM prodotti
+    GROUP BY categoria;
+
+
+// aggiungere la quantita ad un prodotto esistente
+
+    UPDATE prodotti 
+    SET quantita = quantita +5
+    WHERE id = 4;
+
+
+//cancellare prodotto
+
+    DELETE FROM prodotti WHERE id = 6;
+
+
+    
 
