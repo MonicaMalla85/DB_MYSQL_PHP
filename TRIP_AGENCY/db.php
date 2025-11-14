@@ -7,7 +7,7 @@
     $host = "localhost";  //host
     $user = "root";       //utente standard di default -> root
     $password = "";       // non abbiamo inserito nessuna password ( la chiede durante la installazione di XAMPP )
-    $database = "ecommerce"; //nome db su phpmyadmin
+    $database = "tripagency"; //nome db su phpmyadmin
 
     //creo la connessione
     $conn = mysqli_connect($host, $user, $password, $database);
