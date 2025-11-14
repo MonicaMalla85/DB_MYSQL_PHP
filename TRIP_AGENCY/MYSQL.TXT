@@ -31,23 +31,24 @@ CREATE TABLE destinazioni (
 
 );
 
-CREATE TABELLE prenotazioni (
+CREATE TABLE prenotazioni (
 
-    id INT AUTO_INCREMENT PRIMARY KEY, 
+    id INT AUTO_INCREMENT PRIMARY KEY,
     id_cliente INT NOT NULL,
-    id_destinazione INT NULL,
+    id_destinazione INT NOT NULL,
 
-    data_prenotazione DATE NOT NULL,
+    dataprenotazione DATE NOT NULL,
     acconto DECIMAL(10,2) NOT NULL,
     numero_persone INT NOT NULL,
     assicurazione BOOLEAN NOT NULL,
 
-    CONSTRAINT fk_cliente FOREIGN KEY (id_cliente)
-    REFERENCES clienti(id),
-    ON DELETE CASCADE,
+    CONSTRAINT fk_cliente FOREIGN KEY (id_cliente) -> Questo vincolo impedisce l inserimento di una prenotazione con una destinazione che non esiste
+    REFERENCES clienti(id)                        -> referenza con l ID della tabella clienti 
+    ON DELETE CASCADE,                             -> Cancella automaticamente le prenotzioni se la destinazione viene eliminata
 
-    CONTRAINT fk_destinazione FOREIGN KEY (id_destinazione) 
-    REFERENCES destinazioni(id),
+
+    CONSTRAINT fk_destinazione FOREIGN KEY (id_destinazione) 
+    REFERENCES destinazioni(id)
     ON DELETE CASCADE
 );
 
