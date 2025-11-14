@@ -16,38 +16,38 @@
 
                 <!-- MODIFICA: ogni input è ora in una colonna propria -->
                 <div class="col-md-6">
-                    <label class="form-label">Nome</label>
+                    <label style="font-weight: 600;">Nome : </label>
                     <input type="text" name="nome" class="form-control" placeholder="Inserisci il nome..." required>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Cognome</label>
+                    <label style="font-weight: 600;">Cognome : </label>
                     <input type="text" name="cognome" class="form-control" placeholder="Inserisci il cognome..." required>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Email</label>
+                    <label style="font-weight: 600;">Email : </label>
                     <input type="text" name="email" class="form-control" placeholder="Inserisci l'email..." required>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Telefono</label>
+                    <label style="font-weight: 600;">Telefono : </label>
                     <input type="text" name="telefono" class="form-control" placeholder="Inserisci il telefono..." required>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Nazione</label>
+                    <label style="font-weight: 600;">Nazione : </label>
                     <input type="text" name="nazione" class="form-control" placeholder="Inserisci la nazione..." required>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Codice Fiscale</label>
+                    <label style="font-weight: 600;">Codice Fiscale : </label>
                     <input type="text" name="codice_fiscale" class="form-control" placeholder="Inserisci il codice fiscale..." required>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Documento</label>
-                    <input type="text" name="documento" class="form-control" placeholder="Inserisci il documento..." required>
+                    <label style="font-weight: 600;">Documento : </label>
+                    <input type="file" name="documento" class="form-control" placeholder="Inserisci il documento..." required>
                 </div>
 
                 <!-- 
