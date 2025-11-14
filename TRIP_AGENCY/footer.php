@@ -1,6 +1,6 @@
 </main> 
 
-<footer class="text-white text-center mt-auto" style="background-color: #227eb3ff;">
+<footer class="text-white text-center mt-5 p-5" style="background-color: #227eb3ff;">
 
     <small> © Trip-Agency <?php echo date("Y"); ?></small>
 
