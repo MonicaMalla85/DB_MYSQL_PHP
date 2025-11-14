@@ -1,0 +1,39 @@
+----CLIENTI------
+
+id (PK)
+nome
+cognome
+email
+telefono
+nazione
+codice_fiscale
+documento
+
+---DESTINAZIONI----
+
+id (PK)
+città
+paese
+prezzo
+data_partenza
+data_ritorno
+
+
+---PRENOTAZIONI----
+
+id (PK)
+data_prenotazione
+acconto
+numero_persone
+assicurazione
+
+
+----RELAZIONI---
+
+CLIENTE -> PRENOTAZIONI:
+1:N (un cliente può avere piu prenotazioni)
+
+DESTINAZIONE -> PRENOTAZIONI
+1:N (una destinazione puo essere prenotata da piu clienti)
+
+------SCHEMA ER----

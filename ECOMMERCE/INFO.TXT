@@ -29,3 +29,7 @@ CREATE TABLE contatti (
  );
 
  *ON DELETE CASCADE serve per eliminare tutti gli ordini collegati ad un ID specifico nel caso venga CANCELLATO IL CONTATTO
+
+
+ **LA RELAZIONE TRA LE DUE ENTITA SONO -> 1 a * (un contatto    puo' avere piu ordini)
+                                       -> * a * (tanti ordini sono di un contatto)
