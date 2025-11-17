@@ -1,35 +1,46 @@
 ----CREIAMO DB :
 
-CREATE DATABASE IF NOT EXISTS tripagency
+CREATE DATABASE IF NOT EXISTS tripagency;
 
-----PER USARLO:
 
-USE tripagency;
 
---------------CREO TABELLE:
+
+----PER USARLO :
+
+USE tripagency
+
+
+
+
+
+---------------------------------------------------CREO TABELLE---------------------------------------
+
+
 
 CREATE TABLE clienti (
 
-    id INT AUTO_INCREMENT PRIMARY KEY, 
+    id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(30) NOT NULL,
     cognome VARCHAR(30) NOT NULL,
+    email VARCHAR(30) NOT NULL,
     telefono VARCHAR(30) NOT NULL,
     nazione VARCHAR(30) NOT NULL,
-    codice_fiscale VARCHAR(16) NOT NULL,   
+    codice_fiscale VARCHAR(16) NOT NULL,     
     documento VARCHAR(30) NOT NULL
-
 );
+
 
 CREATE TABLE destinazioni (
 
-    id INT AUTO_INCREMENT PRIMARY KEY, 
+    id INT AUTO_INCREMENT PRIMARY KEY,
     citta VARCHAR(30) NOT NULL,
     paese VARCHAR(30) NOT NULL,
-    prezzo DECIMAL(10,2) NOT NULL,
+    prezzo DECIMAL(10,2) NOT NULL,             
     data_partenza DATE NOT NULL,
     data_ritorno DATE NOT NULL
-
 );
+
+
 
 CREATE TABLE prenotazioni (
 
@@ -54,8 +65,10 @@ CREATE TABLE prenotazioni (
 
 
 
-** i CLIENTI e le DESTINAZIONI SONO ENTITà INDIPENDENTI 
 
-    LE PRENOTAZOINI DIPENDONO DA ENTRAMBE TRAMITE CHIAVI ESTERNE (FK)foreign KEY
+*** i CLIENTI e le DESTINAZIONI SONO ENTITà INDIPENDENTI
 
-    i vincoli ON DELETE CASCADE fanno sì che, eliminando un cliente o una destinazione, vengano cancellate automaticamente anche le prenotazioni collegate
+    LE PRENOTAZIONI DIPENDONO DA ENTRAMBE TRAMITE CHIAVI ESTERNE (FK)foreign KEY
+
+    i vincoli ON DELETE CASCADE fanno si che , eliminando una cliente o una destinazione,
+                                            vengano cancellate automaticamente anche le prenotazioni collegate
