@@ -9,25 +9,33 @@ $offset = ($page-1)*$perPagina;
 
 //PRENDE CLIENTI E DESTINAZIONI PER I SELECT
 $clienti = $conn->query("SELECT id, nome, cognome FROM clienti ORDER BY nome ASC");
-$destinazioni = $conn->query("SELECT id, citta, paese FROM destinazioni ORDER BY citta ASC");
+$destinazioni = $conn->query("SELECT id, citta, paese, posti_disponibili FROM destinazioni ORDER BY citta ASC");
 
 //LOGICA DI AGGIUNTA
 if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['aggiungi'])){
     $assicurazione = isset($_POST['assicurazione']) ? 1 : 0;
-    
-    // Preparazione insert con controlli base
-    $stmt = $conn->prepare("INSERT INTO prenotazioni (id_cliente, id_destinazione, dataprenotazione, acconto, numero_persone, assicurazione) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param(
-        "iisddi",
-        $_POST['id_cliente'],
-        $_POST['id_destinazione'],
-        $_POST['dataprenotazione'], // salvata in formato YYYY-MM-DD nel DB
-        $_POST['acconto'],
-        $_POST['numero_persone'],
-        $assicurazione
-    );
-    $stmt->execute();
-    echo "<div class='alert alert-success'>Prenotazione aggiunta correttamente!</div>";
+    $numero_persone = max(1,intval($_POST['numero_persone']));
+    $acconto = max(0,floatval($_POST['acconto']));
+
+    //Controllo posti disponibili
+    $res = $conn->query("SELECT posti_disponibili FROM destinazioni WHERE id=".intval($_POST['id_destinazione']));
+    $posti_disp = $res->fetch_assoc()['posti_disponibili'];
+    if($numero_persone > $posti_disp){
+        echo "<div class='alert alert-danger'>Numero persone supera i posti disponibili!</div>";
+    } else {
+        $stmt = $conn->prepare("INSERT INTO prenotazioni (id_cliente, id_destinazione, dataprenotazione, acconto, numero_persone, assicurazione) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param(
+            "iisddi",
+            $_POST['id_cliente'],
+            $_POST['id_destinazione'],
+            $_POST['dataprenotazione'],
+            $acconto,
+            $numero_persone,
+            $assicurazione
+        );
+        $stmt->execute();
+        echo "<div class='alert alert-success'>Prenotazione aggiunta correttamente!</div>";
+    }
 }
 
 //LOGICA DI MODIFICA
@@ -40,20 +48,29 @@ if(isset($_GET['modifica'])){
 //SALVATAGGIO MODIFICA
 if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['salva_modifica'])){
     $assicurazione = isset($_POST['assicurazione']) ? 1 : 0;
-    
-    $stmt = $conn->prepare("UPDATE prenotazioni SET id_cliente=?, id_destinazione=?, dataprenotazione=?, acconto=?, numero_persone=?, assicurazione=? WHERE id=?");
-    $stmt->bind_param(
-        "iisddii",
-        $_POST['id_cliente'],
-        $_POST['id_destinazione'],
-        $_POST['dataprenotazione'], // rimane YYYY-MM-DD
-        $_POST['acconto'],
-        $_POST['numero_persone'],
-        $assicurazione,
-        $_POST['id']
-    );
-    $stmt->execute();
-    echo "<div class='alert alert-info'>Prenotazione modificata correttamente!</div>";
+    $numero_persone = max(1,intval($_POST['numero_persone']));
+    $acconto = max(0,floatval($_POST['acconto']));
+
+    //Controllo posti disponibili
+    $res = $conn->query("SELECT posti_disponibili FROM destinazioni WHERE id=".intval($_POST['id_destinazione']));
+    $posti_disp = $res->fetch_assoc()['posti_disponibili'];
+    if($numero_persone > $posti_disp){
+        echo "<div class='alert alert-danger'>Numero persone supera i posti disponibili!</div>";
+    } else {
+        $stmt = $conn->prepare("UPDATE prenotazioni SET id_cliente=?, id_destinazione=?, dataprenotazione=?, acconto=?, numero_persone=?, assicurazione=? WHERE id=?");
+        $stmt->bind_param(
+            "iisddii",
+            $_POST['id_cliente'],
+            $_POST['id_destinazione'],
+            $_POST['dataprenotazione'],
+            $acconto,
+            $numero_persone,
+            $assicurazione,
+            $_POST['id']
+        );
+        $stmt->execute();
+        echo "<div class='alert alert-info'>Prenotazione modificata correttamente!</div>";
+    }
 }
 
 //CANCELLAZIONE
@@ -67,7 +84,6 @@ if(isset($_GET['elimina'])){
 $total = $conn->query("SELECT COUNT(*) as t FROM prenotazioni")->fetch_assoc()['t'];
 $totalPages = ceil($total/$perPagina);
 
-//Query per mostrare prenotazioni con JOIN per nomi leggibili
 $result = $conn->query("
     SELECT p.*, c.nome AS cliente_nome, c.cognome AS cliente_cognome, d.citta AS destinazione_citta, d.paese AS destinazione_paese
     FROM prenotazioni p
@@ -80,7 +96,7 @@ $result = $conn->query("
 
 <h2>Prenotazioni</h2>
 
-<!--Form per aggiunta/modifica prenotazioni-->
+<!--Form-->
 <div class="card mb-4">
     <div class="card-body">
         <form action="" method="POST">
@@ -89,12 +105,13 @@ $result = $conn->query("
             <?php endif; ?>
 
             <div class="row g-3">
-                <!-- Selezione Cliente -->
                 <div class="col-md-6">
                     <label style="font-weight:600;">Cliente :</label>
                     <select name="id_cliente" class="form-select" required>
                         <option value="">Seleziona Cliente</option>
-                        <?php while($c = $clienti->fetch_assoc()): ?>
+                        <?php 
+                        $clienti->data_seek(0); //reset loop
+                        while($c = $clienti->fetch_assoc()): ?>
                             <option value="<?= $c['id'] ?>" <?= ($prenotazione_modifica && $prenotazione_modifica['id_cliente']==$c['id'])?'selected':'' ?>>
                                 <?= $c['nome']." ".$c['cognome'] ?>
                             </option>
@@ -102,12 +119,13 @@ $result = $conn->query("
                     </select>
                 </div>
 
-                <!-- Selezione Destinazione -->
                 <div class="col-md-6">
                     <label style="font-weight:600;">Destinazione :</label>
                     <select name="id_destinazione" class="form-select" required>
                         <option value="">Seleziona Destinazione</option>
-                        <?php while($d = $destinazioni->fetch_assoc()): ?>
+                        <?php 
+                        $destinazioni->data_seek(0); //reset loop
+                        while($d = $destinazioni->fetch_assoc()): ?>
                             <option value="<?= $d['id'] ?>" <?= ($prenotazione_modifica && $prenotazione_modifica['id_destinazione']==$d['id'])?'selected':'' ?>>
                                 <?= $d['citta'].", ".$d['paese'] ?>
                             </option>
@@ -115,36 +133,30 @@ $result = $conn->query("
                     </select>
                 </div>
 
-                <!-- Data Prenotazione -->
                 <div class="col-md-6">
                     <label style="font-weight:600;">Data Prenotazione :</label>
                     <input type="date" name="dataprenotazione" class="form-control"
-                           value="<?= $prenotazione_modifica['dataprenotazione'] ?? '' ?>" required>
-                    <!-- Nota: la data è salvata in YYYY-MM-DD, ma nella tabella la mostreremo in formato italiano -->
+                           value="<?= $prenotazione_modifica ? date('Y-m-d', strtotime($prenotazione_modifica['dataprenotazione'])) : '' ?>" required>
                 </div>
 
-                <!-- Numero Persone -->
                 <div class="col-md-6">
                     <label style="font-weight:600;">Numero Persone :</label>
                     <input type="number" name="numero_persone" class="form-control"
-                           value="<?= $prenotazione_modifica['numero_persone'] ?? '' ?>" required>
+                           value="<?= $prenotazione_modifica['numero_persone'] ?? 1 ?>" min="1" required>
                 </div>
 
-                <!-- Acconto -->
                 <div class="col-md-6">
                     <label style="font-weight:600;">Acconto :</label>
                     <input type="number" step="0.01" name="acconto" class="form-control"
-                           value="<?= $prenotazione_modifica['acconto'] ?? '' ?>" required>
+                           value="<?= $prenotazione_modifica['acconto'] ?? 0 ?>" min="0" required>
                 </div>
 
-                <!-- Assicurazione -->
                 <div class="col-md-6 d-flex align-items-center">
                     <input type="checkbox" name="assicurazione" class="form-check-input me-2"
                         <?= ($prenotazione_modifica && $prenotazione_modifica['assicurazione'])?'checked':'' ?>>
                     <label style="font-weight:600;" class="form-check-label">Assicurazione</label>
                 </div>
 
-                <!-- Bottone aggiungi/modifica -->
                 <div class="col-12">
                     <button name="<?= $prenotazione_modifica ? 'salva_modifica' : 'aggiungi' ?>"
                             class="btn btn-<?= $prenotazione_modifica ? 'warning' : 'success' ?>"
@@ -157,7 +169,7 @@ $result = $conn->query("
     </div>
 </div>
 
-<!--Tabella visualizzazione prenotazioni-->
+<!--Tabella-->
 <table class="table table-striped">
     <thead>
         <tr>
@@ -177,7 +189,6 @@ $result = $conn->query("
                 <td><?= $row['id'] ?></td>
                 <td><?= $row['cliente_nome']." ".$row['cliente_cognome'] ?></td>
                 <td><?= $row['destinazione_citta'].", ".$row['destinazione_paese'] ?></td>
-                <!-- Nuovo formato italiano gg/mm/aaaa -->
                 <td><?= date('d/m/Y', strtotime($row['dataprenotazione'])) ?></td>
                 <td><?= $row['numero_persone'] ?></td>
                 <td><?= $row['acconto'] ?></td>

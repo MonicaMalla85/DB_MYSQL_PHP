@@ -3,23 +3,20 @@ include 'header.php';
 include 'db.php'; 
 
 //LOGICA PER IMPAGINAZIONE
-$perPagina = 10;
+$perPagina = 10;  
 $page = isset($_GET['page']) ? max(1,intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $perPagina;
 
 //LOGICA DI AGGIUNTA
 if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['aggiungi'])){
-    $data_partenza = $_POST['data_partenza']; // già YYYY-MM-DD dal date picker
-    $data_ritorno = $_POST['data_ritorno'];
-
     $stmt = $conn->prepare("INSERT INTO destinazioni (citta, paese, prezzo, data_partenza, data_ritorno, posti_disponibili) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param(
         "ssissi", 
         $_POST['citta'], 
         $_POST['paese'], 
         $_POST['prezzo'], 
-        $data_partenza, 
-        $data_ritorno, 
+        $_POST['data_partenza'], 
+        $_POST['data_ritorno'], 
         $_POST['posti_disponibili']
     );
     $stmt->execute();
@@ -33,19 +30,16 @@ if(isset($_GET['modifica'])){
     $destinazione_modifica = $res->fetch_assoc();
 }
 
-//SALVATAGGIO MODIFICA
+//MODIFICA DEL DATO, SALVATAGGIO
 if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['salva_modifica'])){
-    $data_partenza = $_POST['data_partenza'];
-    $data_ritorno = $_POST['data_ritorno'];
-
     $stmt = $conn->prepare("UPDATE destinazioni SET citta=?, paese=?, prezzo=?, data_partenza=?, data_ritorno=?, posti_disponibili=? WHERE id=?");
     $stmt->bind_param(
         "ssissii", 
         $_POST['citta'], 
         $_POST['paese'], 
         $_POST['prezzo'], 
-        $data_partenza, 
-        $data_ritorno, 
+        $_POST['data_partenza'], 
+        $_POST['data_ritorno'], 
         $_POST['posti_disponibili'],
         $_POST['id']
     );
@@ -60,18 +54,15 @@ if(isset($_GET['elimina'])){
     echo "<div class='alert alert-info'>Destinazione Cancellata correttamente</div>";
 }
 
-//RENDER
-$total = $conn->query("SELECT COUNT(*) as t FROM destinazioni")->fetch_assoc()['t'];
-$totalPages = ceil($total / $perPagina);
-
-$result = $conn->query("SELECT * FROM destinazioni ORDER BY id ASC LIMIT $perPagina OFFSET $offset");
 ?>
 
 <h2>Destinazioni</h2>
 
+<!--Form-->
 <div class="card mb-4">
     <div class="card-body">
         <form action="" method="POST">
+
             <?php if($destinazione_modifica): ?>
                 <input type="hidden" name="id" value="<?= $destinazione_modifica['id'] ?>">
             <?php endif; ?>
@@ -79,39 +70,39 @@ $result = $conn->query("SELECT * FROM destinazioni ORDER BY id ASC LIMIT $perPag
             <div class="row g-3">
 
                 <div class="col-md-6">
-                    <label style="font-weight: 600;">Città:</label>
+                    <label style="font-weight: 600;" for="">Città : </label>
                     <input type="text" name="citta" class="form-control" placeholder="es.: Milano" 
-                           value="<?= $destinazione_modifica['citta'] ?? ''?>" required>
+                        value="<?= $destinazione_modifica['citta'] ?? ''?>" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label style="font-weight: 600;">Paese:</label>
+                    <label style="font-weight: 600;" for="">Paese : </label>
                     <input type="text" name="paese" class="form-control" placeholder="es.: Italia" 
-                           value="<?= $destinazione_modifica['paese'] ?? ''?>" required>
+                        value="<?= $destinazione_modifica['paese'] ?? ''?>" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label style="font-weight: 600;">Prezzo:</label>
-                    <input type="number" name="prezzo" class="form-control" 
-                           value="<?= $destinazione_modifica['prezzo'] ?? ''?>" required>
+                    <label style="font-weight: 600;" for="">Prezzo : </label>
+                    <input type="number" name="prezzo" class="form-control" min="1"
+                        value="<?= $destinazione_modifica['prezzo'] ?? 1?>" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label style="font-weight: 600;">Data Partenza:</label>
+                    <label style="font-weight: 600;" for="">Data Partenza : </label>
                     <input type="date" name="data_partenza" class="form-control" 
-                           value="<?= $destinazione_modifica['data_partenza'] ?? '' ?>" required>
+                        value="<?= $destinazione_modifica['data_partenza'] ?? ''?>" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label style="font-weight: 600;">Data Ritorno:</label>
+                    <label style="font-weight: 600;" for="">Data Ritorno : </label>
                     <input type="date" name="data_ritorno" class="form-control" 
-                           value="<?= $destinazione_modifica['data_ritorno'] ?? '' ?>" required>
+                        value="<?= $destinazione_modifica['data_ritorno'] ?? ''?>" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label style="font-weight: 600;">Posti Disponibili:</label>
-                    <input type="number" name="posti_disponibili" class="form-control" 
-                           value="<?= $destinazione_modifica['posti_disponibili'] ?? ''?>" required>
+                    <label style="font-weight: 600;" for="">Posti Disponibili : </label>
+                    <input type="number" name="posti_disponibili" class="form-control" min="1"
+                        value="<?= $destinazione_modifica['posti_disponibili'] ?? 1?>" required>
                 </div>
 
                 <div class="col-12">
@@ -128,6 +119,14 @@ $result = $conn->query("SELECT * FROM destinazioni ORDER BY id ASC LIMIT $perPag
     </div>
 </div>
 
+<!--LOGICA RENDER -->
+<?php
+$total = $conn->query("SELECT COUNT(*) as t FROM destinazioni")->fetch_assoc()['t'];
+$totalPages = ceil($total / $perPagina);
+$result = $conn->query("SELECT * FROM destinazioni ORDER BY id ASC LIMIT $perPagina OFFSET $offset");
+?>
+
+<!--Tabella-->
 <table class="table table-striped">
     <thead>
         <tr>
@@ -160,6 +159,7 @@ $result = $conn->query("SELECT * FROM destinazioni ORDER BY id ASC LIMIT $perPag
     </tbody>
 </table>
 
+<!--Paginazione-->
 <nav>
     <ul class="pagination">
         <?php for($i=1; $i<=$totalPages; $i++): ?>
