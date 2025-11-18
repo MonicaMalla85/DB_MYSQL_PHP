@@ -38,6 +38,7 @@ CREATE TABLE destinazioni (
     prezzo DECIMAL(10,2) NOT NULL,             
     data_partenza DATE NOT NULL,
     data_ritorno DATE NOT NULL
+    posti_disponibili INT NOT NULL
 );
 
 
