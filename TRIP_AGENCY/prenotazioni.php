@@ -1,4 +1,4 @@
-<?php
+<?php 
 include 'header.php';
 include 'db.php';
 
@@ -84,8 +84,17 @@ if(isset($_GET['elimina'])){
 $total = $conn->query("SELECT COUNT(*) as t FROM prenotazioni")->fetch_assoc()['t'];
 $totalPages = ceil($total/$perPagina);
 
+/*
+    AGGIUNTO d.prezzo AL SELECT 
+    → SERVE PER CALCOLARE IL RESTO (importo ancora da pagare)
+*/
 $result = $conn->query("
-    SELECT p.*, c.nome AS cliente_nome, c.cognome AS cliente_cognome, d.citta AS destinazione_citta, d.paese AS destinazione_paese
+    SELECT p.*, 
+           c.nome AS cliente_nome, 
+           c.cognome AS cliente_cognome, 
+           d.citta AS destinazione_citta, 
+           d.paese AS destinazione_paese,
+           d.prezzo AS prezzo_destinazione  /* NUOVO */
     FROM prenotazioni p
     JOIN clienti c ON p.id_cliente = c.id
     JOIN destinazioni d ON p.id_destinazione = d.id
@@ -110,7 +119,7 @@ $result = $conn->query("
                     <select name="id_cliente" class="form-select" required>
                         <option value="">Seleziona Cliente</option>
                         <?php 
-                        $clienti->data_seek(0); //reset loop
+                        $clienti->data_seek(0);
                         while($c = $clienti->fetch_assoc()): ?>
                             <option value="<?= $c['id'] ?>" <?= ($prenotazione_modifica && $prenotazione_modifica['id_cliente']==$c['id'])?'selected':'' ?>>
                                 <?= $c['nome']." ".$c['cognome'] ?>
@@ -124,7 +133,7 @@ $result = $conn->query("
                     <select name="id_destinazione" class="form-select" required>
                         <option value="">Seleziona Destinazione</option>
                         <?php 
-                        $destinazioni->data_seek(0); //reset loop
+                        $destinazioni->data_seek(0);
                         while($d = $destinazioni->fetch_assoc()): ?>
                             <option value="<?= $d['id'] ?>" <?= ($prenotazione_modifica && $prenotazione_modifica['id_destinazione']==$d['id'])?'selected':'' ?>>
                                 <?= $d['citta'].", ".$d['paese'] ?>
@@ -179,6 +188,7 @@ $result = $conn->query("
             <th>Data Prenotazione</th>
             <th>Numero Persone</th>
             <th>Acconto</th>
+            <th>Resto</th> <!-- NUOVA COLONNA -->
             <th>Assicurazione</th>
             <th>Azioni</th>
         </tr>
@@ -192,7 +202,16 @@ $result = $conn->query("
                 <td><?= date('d/m/Y', strtotime($row['dataprenotazione'])) ?></td>
                 <td><?= $row['numero_persone'] ?></td>
                 <td><?= $row['acconto'] ?></td>
+
+                <?php 
+                // CALCOLO RESTO = (prezzo destinazione × persone) - acconto
+                $totale = $row['prezzo_destinazione'] * $row['numero_persone'];
+                $resto = $totale - $row['acconto'];
+                ?>
+                <td><?= number_format($resto, 2) ?></td> <!-- NUOVA CELLA -->
+
                 <td><?= $row['assicurazione'] ? 'Sì' : 'No' ?></td>
+
                 <td>
                     <a class="btn btn-sm btn-warning" href="?modifica=<?= $row['id'] ?>">Modifica</a>
                     <a class="btn btn-sm btn-danger" href="?elimina=<?= $row['id'] ?>" onclick="return confirm('Sicuro di voler eliminare questa prenotazione?')">Elimina</a>
