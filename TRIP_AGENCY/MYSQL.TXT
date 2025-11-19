@@ -73,3 +73,17 @@ CREATE TABLE prenotazioni (
 
     i vincoli ON DELETE CASCADE fanno si che , eliminando una cliente o una destinazione,
                                             vengano cancellate automaticamente anche le prenotazioni collegate
+
+
+
+* nel bind_param, esiste la tipizzazione  esempio  : "sssssss"
+
+    ogni lettera corrisponde ad un tipo di dato : 
+
+        s -> stringa
+        i -> intero
+        d -> DECIMAL
+        b -> BLOB
+
+
+
